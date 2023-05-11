@@ -1,0 +1,14 @@
+﻿@page "/counter"
+@using AntDesign
+
+<DatePicker TValue="DateTime?" Picker="@DatePickerType.Date" />
+<br />
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

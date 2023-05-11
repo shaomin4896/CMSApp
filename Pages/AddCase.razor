@@ -1,0 +1,155 @@
+@page "/addcase"
+@using System.Text.Json;
+@using AntDesign
+@using CaseManagementAPI.Models;
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService _localStorageService;
+@inject Service.AuthService _authService;
+@inject Service.CaseService _caseService;
+@inject INotificationService _notice
+
+
+<Form Size="large" Layout="@FormLayout.Horizontal" LabelCol="@(new ColLayoutParam { Span = "4" })"
+	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@model" OnFinish="OnFinish"
+	OnFinishFailed="OnFinishFailed">
+	<Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
+		<TabPane Key="1" Tab="個案主檔">
+			<div class="row">
+				<div class="col">
+					<FormItem Label="個案編號">
+						<Input @bind-Value="@context.Id" disabled />
+					</FormItem>
+					<FormItem Label="病歷號碼">
+						<Input @bind-Value="@context.PatientId" />
+					</FormItem>
+					<FormItem Label="姓名">
+						<Input @bind-Value="@context.PatientName" />
+					</FormItem>
+					<FormItem Label="性別">
+						<RadioGroup @bind-Value="context.IsMale">
+							<Radio RadioButton Value="@(true)">男</Radio>
+							<Radio RadioButton Value="@(false)">女</Radio>
+						</RadioGroup>
+					</FormItem>
+					<FormItem Label="身分證字號">
+						<Input @bind-Value="@context.CustomerId" />
+					</FormItem>
+					<FormItem Label="出生年月日">
+						<DatePicker @bind-Value="@context.Birthday" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+					</FormItem>
+					<FormItem Label="醫師姓名">
+						<Input @bind-Value="@context.DoctorName" />
+					</FormItem>
+					<FormItem Label="就醫日期">
+						<DatePicker @bind-Value="@context.SeekDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+					</FormItem>
+					<FormItem Label="收案日期">
+						<DatePicker @bind-Value="@context.StartDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+					</FormItem>
+					<FormItem Label="結案日期">
+						<DatePicker @bind-Value="@context.EndDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+					</FormItem>
+					<FormItem Label="結案原因">
+						<TextArea @bind-Value="@context.EndReason" Placeholder="請輸入原因" AutoSize="true"/>
+					</FormItem>
+				</div>
+				<div class="col">
+					<FormItem Label="身高">
+						<Input @bind-Value="@context.Height" />
+					</FormItem>
+					<FormItem Label="體重">
+						<Input @bind-Value="@context.Weight" />
+					</FormItem>
+					<FormItem Label="腰圍">
+						<Input @bind-Value="@context.Waistline" />
+					</FormItem>
+					<FormItem Label="過敏藥物">
+						<Input @bind-Value="@context.AllergyMd" />
+					</FormItem>
+					<FormItem Label="過去病史">
+						<Input @bind-Value="@context.MedicalHistory" />
+					</FormItem>
+					<FormItem Label="家族病史">
+						<Input @bind-Value="@context.FamilyMedicalHistory" />
+					</FormItem>
+					<FormItem Label="通訊地址">
+						<Input @bind-Value="@context.Address" />
+					</FormItem>
+					<FormItem Label="聯絡電話">
+						<Input @bind-Value="@context.Phone" />
+					</FormItem>
+					<FormItem Label="緊急聯絡人">
+						<Input @bind-Value="@context.Contactor" />
+					</FormItem>
+				</div>
+			</div>
+		</TabPane>
+		<TabPane Key="2" Tab="個案檢驗紀錄檔">
+			<div class="row" style="padding-bottom: 1rem;">
+				<div class="col"></div>
+				<div class="col"><Input Placeholder="個管師姓名" @bind-Value="@context.Manger.Name"/></div>
+				<div class="col"></div>
+				<br>
+			</div>
+			<div class="row">
+				<div class="col">
+					<Blood bloodTest="@context.BloodTests.First()"></Blood>
+				</div>
+				<div class="col">
+					<Urine urineTest="@context.UrineTests.First()"></Urine>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col">
+					<Foot footTest="@context.FootTests.First()"></Foot>
+				</div>
+				<div class="col">
+					<Eye eyeTest="@context.EyeTests.First()"></Eye>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-5"></div>
+				<div class="col-2">
+					<Button Type="@ButtonType.Primary" HtmlType="submit">
+						儲存
+					</Button>
+				</div>
+				<div class="col-5"></div>
+			</div>
+		</TabPane>
+	</Tabs>
+</Form>
+@code
+{
+	private CmsCase model = new CmsCase
+    {
+        BloodTests = new List<BloodTest>() { new BloodTest()},
+		EyeTests = new List<EyeTest>() { new EyeTest()},
+		FootTests = new List<FootTest>() { new FootTest()},
+		UrineTests = new List<UrineTest>() { new UrineTest()},
+		Manger = new CmsUser()
+    };
+	private async void OnFinish(EditContext editContext)
+	{
+		var manager = await _authService.GetUserByName(model.Manger.Name);
+		model.Manger = manager;
+		var newCaseId = await _caseService.NewCase(model);
+		Console.WriteLine(newCaseId);
+		if (newCaseId != 0)
+		{
+			await _notice.Open(new NotificationConfig()
+			{
+				Message = "登錄成功",
+				Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 案件已登錄",
+				NotificationType = NotificationType.Success
+			});
+		}
+	}
+
+	private void OnFinishFailed(EditContext editContext)
+	{
+		Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+	}
+}

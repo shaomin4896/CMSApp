@@ -1,0 +1,64 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations;
+@using AntDesign
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService _localStorageService;
+@inject Service.AuthService _authService;
+@inject NotificationService _notice
+@inject LoginState _loginState
+@inject NavigationManager NavManager
+
+
+<div class="col-4">
+	<Form OnFinish="OnFinish" OnFinishFailed="OnFinishFailed" Model="@model" LabelColSpan="8" WrapperColSpan="16">
+		<FormItem Label="帳號">
+			<Input Size="large" @bind-Value="@context.Username" />
+		</FormItem>
+		<FormItem Label="密碼">
+			<InputPassword Size="large" @bind-Value="@context.Password" />
+		</FormItem>
+		<FormItem WrapperColOffset="8" WrapperColSpan="16">
+			<Button Type="@ButtonType.Primary" HtmlType="submit">
+				登入
+			</Button>
+		</FormItem>
+	</Form>
+</div>
+
+
+@code
+{
+	public class Model
+	{
+		[Required]
+		public string Username { get; set; }
+		[Required]
+		public string Password { get; set; }
+	}
+
+	private Model model = new Model();
+
+
+	private async void OnFinish(EditContext editContext)
+	{
+		string token = "";
+		token = await _authService.GetToken(model.Username, model.Password);
+		await _localStorageService.SetItem("jwtToken", token);
+		var user = await _authService.GetCurrentUser();
+		_authService.InitLoginState(user);
+		if (_loginState.IsLogin)
+		{
+			await _notice.Open(new NotificationConfig()
+			{
+				Message = "登入成功！",
+				Description = $"歡迎！{user.Name}",
+				NotificationType = NotificationType.Success
+			});
+			NavManager.NavigateTo("/addCase");
+		}
+	}
+
+	private async void OnFinishFailed(EditContext editContext)
+	{
+	}
+}

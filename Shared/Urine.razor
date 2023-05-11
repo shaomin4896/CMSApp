@@ -1,0 +1,29 @@
+@using AntDesign
+@using CaseManagementAPI.Models;
+
+<Card Title="尿液檢驗" class="col-12">
+	<Extra></Extra>
+	<Body>
+		<FormItem Label="檢驗日期">
+			<DatePicker @bind-Value="@urineTest.TestDate" DefaultValue="@DateTime.Now" TValue="DateTime?" Picker="@DatePickerType.Date" />
+		</FormItem>
+		<FormItem Label="尿液常規檢查">
+			<RadioGroup @bind-Value="@urineTest.DidRoutine">
+							<Radio RadioButton Value="@(true)">已做</Radio>
+							<Radio RadioButton Value="@(false)">未做</Radio>
+			</RadioGroup>
+		</FormItem>
+		<FormItem Label="低密度脂蛋白">
+			<Input @bind-Value="@urineTest.LDL" DefaultValue="@null" Placeholder=""/>
+		</FormItem>
+		<FormItem Label="尿液微量蛋白">
+			<Input @bind-Value="@urineTest.Microprotein" DefaultValue="@null" Placeholder=""/>
+		</FormItem>
+	</Body>
+</Card>
+
+@code
+{
+	[Parameter]
+	public UrineTest urineTest { get; set; }
+}

@@ -1,0 +1,30 @@
+@using AntDesign
+@using CaseManagementAPI.Models;
+
+<Card Title="血液檢驗" class="col-12">
+	<Extra></Extra>
+	<Body>
+		<FormItem Label="檢驗日期">
+			<DatePicker @bind-Value="@footTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
+		</FormItem>
+		<FormItem Label="左腳">
+			<RadioGroup @bind-Value="@footTest.IsLeftNormal">
+							<Radio RadioButton Value="@(true)">正常</Radio>
+							<Radio RadioButton Value="@(false)">異常</Radio>
+			</RadioGroup>
+		</FormItem>
+		<FormItem Label="右腳">
+			<RadioGroup @bind-Value="@footTest.IsRightNormal">
+							<Radio RadioButton Value="@(true)">正常</Radio>
+							<Radio RadioButton Value="@(false)">異常</Radio>
+			</RadioGroup>
+		</FormItem>
+		
+	</Body>
+</Card>
+
+@code
+{
+	[Parameter]
+	public FootTest footTest { get; set; }
+}

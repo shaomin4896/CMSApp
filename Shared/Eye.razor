@@ -1,0 +1,23 @@
+@using AntDesign
+@using CaseManagementAPI.Models;
+
+<Card Title="血液檢驗" class="col-12">
+	<Extra></Extra>
+	<Body>
+		<FormItem Label="檢驗日期">
+			<DatePicker @bind-Value="@eyeTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
+		</FormItem>
+		<FormItem Label=" ">
+			<RadioGroup @bind-Value="@eyeTest.IsNormal">
+							<Radio RadioButton Value="@(true)">正常</Radio>
+							<Radio RadioButton Value="@(false)">異常</Radio>
+			</RadioGroup>
+		</FormItem>
+	</Body>
+</Card>
+
+@code
+{
+	[Parameter]
+	public EyeTest eyeTest { get; set; }
+}

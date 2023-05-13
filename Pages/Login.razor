@@ -10,19 +10,21 @@
 
 
 <div class="col-4">
-	<Form OnFinish="OnFinish" OnFinishFailed="OnFinishFailed" Model="@model" LabelColSpan="8" WrapperColSpan="16">
-		<FormItem Label="帳號">
-			<Input Size="large" @bind-Value="@context.Username" />
-		</FormItem>
-		<FormItem Label="密碼">
-			<InputPassword Size="large" @bind-Value="@context.Password" />
-		</FormItem>
-		<FormItem WrapperColOffset="8" WrapperColSpan="16">
-			<Button Type="@ButtonType.Primary" HtmlType="submit">
-				登入
-			</Button>
-		</FormItem>
-	</Form>
+	<Spin Spinning=IsLoading>
+		<Form OnFinish="OnFinish" OnFinishFailed="OnFinishFailed" Model="@model" LabelColSpan="8" WrapperColSpan="16">
+			<FormItem Label="帳號">
+				<Input Size="large" @bind-Value="@context.Username" />
+			</FormItem>
+			<FormItem Label="密碼">
+				<InputPassword Size="large" @bind-Value="@context.Password" />
+			</FormItem>
+			<FormItem WrapperColOffset="8" WrapperColSpan="16">
+				<Button Type="@ButtonType.Primary" HtmlType="submit">
+					登入
+				</Button>
+			</FormItem>
+		</Form>
+	</Spin>
 </div>
 
 
@@ -35,10 +37,9 @@
 		[Required]
 		public string Password { get; set; }
 	}
-
 	private Model model = new Model();
 
-
+	private bool IsLoading = false;
 	private async void OnFinish(EditContext editContext)
 	{
 		string token = "";
@@ -48,12 +49,14 @@
 		_authService.InitLoginState(user);
 		if (_loginState.IsLogin)
 		{
+			IsLoading = true;
+			StateHasChanged();
 			await _notice.Open(new NotificationConfig()
-			{
-				Message = "登入成功！",
-				Description = $"歡迎！{user.Name}",
-				NotificationType = NotificationType.Success
-			});
+				{
+					Message = "登入成功！",
+					Description = $"歡迎！{user.Name}",
+					NotificationType = NotificationType.Success
+				});
 			NavManager.NavigateTo("/addCase");
 		}
 	}

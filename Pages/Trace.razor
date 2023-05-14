@@ -1,4 +1,4 @@
-@page "/trace"
+@page "/trace/{caseId:int}"
 @using System.Text.Json;
 @using CaseManagementAPI.Models;
 @inject IJSRuntime JsRuntime
@@ -7,107 +7,163 @@
 @inject Service.CaseService _caseService;
 @inject INotificationService _notice
 @inject LoginState _loginState;
+@inject NavigationManager _NavManager;
 
 
 <PageHeader Class="site-page-header" Title="個案追蹤" OnBack="@(()=> { Console.WriteLine("OnBack");})" />
 
 <Form Size="large" Layout="@FormLayout.Horizontal" LabelCol="@(new ColLayoutParam { Span = "4" })"
-	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@model" OnFinish="OnFinish"
-	OnFinishFailed="OnFinishFailed">
-	<Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
-		<TabPane Key="1" Tab="個案追蹤管理">
-			<div class="row">
-				<div class="col">
-					<FormItem Label="個案編號">
-						<Input @bind-Value="@context.Id" />
-					</FormItem>
-					<FormItem Label="姓名">
-						<Input @bind-Value="@context.PatientName" />
-					</FormItem>
-					<FormItem Label="身份證字號">
-						<Input @bind-Value="@context.CustomerId" />
-					</FormItem>
-					<FormItem Label="追蹤管理日期">
-						@* check date model source *@
-						<DatePicker @bind-Value="@context.SeekDate" DefaultValue="@DateTime.Now" TValue="DateTime"
-							Picker="@DatePickerType.Date" />
-					</FormItem>
+	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@model">
+	<Spin Spinning=isLoading>
+		<Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
+			<TabPane Key="1" Tab="個案追蹤管理">
+				<div class="row">
+					<div class="col">
+						<FormItem Label="個案編號">
+							<Input @bind-Value="@context.Id" />
+						</FormItem>
+						<FormItem Label="姓名">
+							<Input @bind-Value="@context.PatientName" />
+						</FormItem>
+						<FormItem Label="身份證字號">
+							<Input @bind-Value="@context.CustomerId" />
+						</FormItem>
+						<FormItem Label="追蹤管理日期">
+							@* check date model source *@
+							<DatePicker @bind-Value=healthHistory.TraceDate DefaultValue="@DateTime.Now"
+								TValue="DateTime" Picker="@DatePickerType.Date" />
+						</FormItem>
+					</div>
+					<div class="col">
+						<FormItem Label="醫生姓名">
+							<Input @bind-Value="@context.DoctorName" />
+						</FormItem>
+						<FormItem Label="個管師">
+							<Input @bind-Value="@context.Manger.Name" />
+						</FormItem>
+						<FormItem Label="複診次數">
+							<Input Value="@context.BloodTests.Count" />
+						</FormItem>
+					</div>
 				</div>
-				<div class="col">
-					<FormItem Label="醫生姓名">
-						<Input @bind-Value="@context.DoctorName" />
+				<Divider></Divider>
+				<div class="row">
+					<div class="col-7">
+						<Blood bloodTest=bloodTest></Blood>
+					</div>
+				</div>
+			</TabPane>
+			<TabPane Key="2" Tab="衛教紀錄檔">
+
+				<div class="row">
+					<FormItem Label="衛教追蹤日期">
+						@* check date model source *@
+						<DatePicker @bind-Value="@healthHistory.TraceDate" DefaultValue="@DateTime.Now"
+							TValue="DateTime" Picker="@DatePickerType.Date" />
 					</FormItem>
 					<FormItem Label="個管師">
-						<Input @bind-Value="@context.Manger.Name" />
-					</FormItem>
-					<FormItem Label="複診次數">
-						<Input Value="10" />
+						@* check date model source *@
+						<Input @bind-Value="@healthHistory.Manager.Name" DefaultValue="@model?.Manger?.Name" />
 					</FormItem>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-7">
-					<Blood bloodTest=bloodTest></Blood>
-				</div>
-			</div>
-		</TabPane>
-		<TabPane Key="2" Tab="衛教紀錄檔">
-			<div class="row">
-				<FormItem Label="衛教追蹤日期">
-					@* check date model source *@
-					<DatePicker @bind-Value="@healthHistory.TraceDate" DefaultValue="@DateTime.Now" TValue="DateTime"
-						Picker="@DatePickerType.Date" />
-				</FormItem>
-				<FormItem Label="個管師">
-					@* check date model source *@
-					<Input @bind-Value="@healthHistory.Manager.Name" />
-				</FormItem>
-			</div>
-			<CheckboxGroup Style="width:100%">
+				<Divider></Divider>
+				<CheckboxGroup Style="width:100%" OnChange="OnChange">
+					<Row>
+						<Col Span="12">
+						<h3>衛教追蹤項目：</h3>
+						<Checkbox Label="1">
+							<Title Level="4">1.糖尿病的認識</Title>
+						</Checkbox><br>
+						<Checkbox Label="2">
+							<Title Level="4">2.自我血糖監測與認識</Title>
+						</Checkbox><br>
+						<Checkbox Label="3">
+							<Title Level="4">3.低血糖的認識與處理</Title>
+						</Checkbox><br>
+						<Checkbox Label="4">
+							<Title Level="4">4.高血糖的認識與處理</Title>
+						</Checkbox><br>
+						<Checkbox Label="5">
+							<Title Level="4">5.胰島素注射部位的輪替及照護</Title>
+						</Checkbox><br>
+						<Checkbox Label="6">
+							<Title Level="4">6.筆型胰島素注射器的使用介紹</Title>
+						</Checkbox><br>
+						<Checkbox Label="7">
+							<Title Level="4">7.糖尿病視網膜病變</Title>
+						</Checkbox><br>
+						<Checkbox Label="8">
+							<Title Level="4">8.糖尿病的足部照護</Title>
+						</Checkbox><br>
+						<Checkbox Label="9">
+							<Title Level="4">9.糖尿病飲食原則</Title>
+						</Checkbox><br>
+						<Checkbox Label="T">
+							<Title Level="4">10.糖尿病－運動篇</Title>
+						</Checkbox><br>
+						</Col>
+						<Col Span="12">
+						<h3>內容：</h3>
+						<TextArea Rows="11" @bind-Value=healthHistory.Content />
+						</Col>
+					</Row>
+				</CheckboxGroup>
+				<Divider></Divider>
 				<Row>
-					<Col Span="12">
-					<Checkbox Label="A">1.糖尿病的認識</Checkbox><br><br>
-					<Checkbox Label="B">2.</Checkbox><br>
-					<Checkbox Label="C">3.</Checkbox><br>
-					<Checkbox Label="D">4.</Checkbox><br>
-					<Checkbox Label="A">5.</Checkbox><br>
-					<Checkbox Label="A">6.</Checkbox><br>
-					<Checkbox Label="A">7.</Checkbox><br>
-					<Checkbox Label="A">8.</Checkbox><br>
-					<Checkbox Label="A">9.</Checkbox><br>
-					<Checkbox Label="A">10.</Checkbox><br>
+
+					<Col Span="10">
 					</Col>
-					<Col Span="12">
-					內容：
-					<TextArea Rows="11" @bind-Value=healthHistory.Content />
+					<Col>
+					<br>
+					<Button OnClick="OnFinish">
+						儲存
+					</Button>
 					</Col>
 				</Row>
-			</CheckboxGroup>
-		</TabPane>
-	</Tabs>
+
+			</TabPane>
+		</Tabs>
+	</Spin>
 </Form>
 @code
 {
-	private CmsCase model = new CmsCase
-		{
-			BloodTests = new List<BloodTest>() { new BloodTest() },
-			EyeTests = new List<EyeTest>() { new EyeTest() },
-			FootTests = new List<FootTest>() { new FootTest() },
-			UrineTests = new List<UrineTest>() { new UrineTest() },
-			Manger = new CmsUser()
-		};
+	[Parameter]
+	public int caseId { get; set; }
+	private CmsCase model { get; set; } = new();
 	private BloodTest bloodTest = new();
 	private HealthHistory healthHistory = new()
 		{
 			Manager = new() { }
 		};
-	private async void OnFinish(EditContext editContext)
+	private bool isLoading = false;
+	protected async override Task OnInitializedAsync()
 	{
-
+		model = await _caseService.GetCaseAsync(caseId);
 	}
 
-	private void OnFinishFailed(EditContext editContext)
+	private async void OnFinish()
 	{
-		Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+		isLoading = true;
+		var manager = await _authService.GetUserByName(healthHistory.Manager.Name);
+		healthHistory.Manager = manager;
+		await _caseService.NewTracing(model.Id, bloodTest, healthHistory);
+		await _notice.Open(new NotificationConfig()
+			{
+				Message = "追蹤紀錄新增成功",
+				Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 已新增追蹤紀錄",
+				NotificationType = NotificationType.Success
+			});
+		_NavManager.NavigateTo("/AddCase");
+	}
+
+	void OnChange(string[] checkedValues)
+	{
+		var healthSelected = new bool[10];
+		checkedValues.ForEach(x =>
+		{
+			var index = x == "T" ? 9 : int.Parse(x) - 1;
+			healthSelected[index] = true;
+		});
+		healthHistory.TraceItem = healthSelected;
 	}
 }

@@ -40,6 +40,5 @@ namespace CaseManagementApp.Service
             var cmsCase = await _httpClient.GetFromJsonAsync<CmsCase>($"/Case/{id}");
             return cmsCase;
         }
-        // VisibleTest
     }
 }

@@ -1,0 +1,63 @@
+@page "/last/{caseId:int}"
+@using System.Text.Json;
+@using CaseManagementAPI.Models;
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService _localStorageService;
+@inject Service.AuthService _authService;
+@inject Service.CaseService _caseService;
+@inject INotificationService _notice
+@inject LoginState _loginState;
+@inject NavigationManager _NavManager;
+
+<Spin Spinning=isLoading>
+	<Card Title="年度評估">
+
+		<Body>
+			<Row>
+				<Col Span="12">
+					<Input Value="@cmsCase.Id" Size="@InputSize.Large">
+						<AddOnBefore>個案編號：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.PatientName" Size="@InputSize.Large">
+						<AddOnBefore>姓名：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.CustomerId" Size="@InputSize.Large">
+						<AddOnBefore>身分證字號：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.DoctorName" Size="@InputSize.Large">
+						<AddOnBefore>醫生姓名：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.Manger.Name" Size="@InputSize.Large">
+						<AddOnBefore>個管師：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.BloodTests.Count" Size="@InputSize.Large">
+						<AddOnBefore>複診次數：</AddOnBefore>
+					</Input><br><br>
+				</Col>
+				<Col Span="12">
+				</Col>
+			</Row>
+		</Body>
+	</Card>
+</Spin>
+@code
+{
+	[Parameter]
+	public int caseId { get; set; }
+	private CmsCase? cmsCase = new();
+	private BloodTest bloodTest = new();
+	private HealthHistory healthHistory = new()
+		{
+			Manager = new() { }
+		};
+	private bool isLoading = false;
+	protected async override Task OnInitializedAsync()
+	{
+		cmsCase = await _caseService.GetCaseAsync(caseId);
+		Console.WriteLine(cmsCase.ToJsonString());
+	}
+
+	private async void OnFinish()
+	{
+	}
+}

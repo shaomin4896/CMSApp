@@ -55,7 +55,9 @@
 				</div>
 				<div class="col">
 					<FormItem Label="身高">
-						<Input @bind-Value="@context.Height" />
+						<Input @bind-Value="@context.Height">
+							<AddOnAfter>CM</AddOnAfter>
+						</Input>
 					</FormItem>
 					<FormItem Label="體重">
 						<Input @bind-Value="@context.Weight" />

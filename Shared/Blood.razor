@@ -5,22 +5,32 @@
 	<Extra></Extra>
 	<Body>
 		<FormItem Label="檢驗日期">
-			<DatePicker @bind-Value="@bloodTest.TestDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+			<DatePicker @bind-Value="@bloodTest.TestDate" Picker="@DatePickerType.Date" />
 		</FormItem>
 		<FormItem Label="糖化血色素">
-			<Input @bind-Value="@bloodTest.HBAIC" Placeholder="HBAIC" />
+			<Input @bind-Value="@bloodTest.HBAIC" Placeholder="HBAIC">
+				<AddOnAfter>%</AddOnAfter>
+			</Input>
 		</FormItem>
 		<FormItem Label="血糖測量值">
-			<Input @bind-Value="@bloodTest.BloodSugarBeforeMeal" DefaultValue="@null" Placeholder="餐前血糖測量值"/>
+			<Input @bind-Value="@bloodTest.BloodSugarBeforeMeal" DefaultValue="@null" Placeholder="餐前血糖測量值">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 		<FormItem Label="      ">
-			<Input @bind-Value="@bloodTest.BloodSugarAfterMeal" DefaultValue="@null" Placeholder="餐後血糖測量值"/>
+			<Input @bind-Value="@bloodTest.BloodSugarAfterMeal" DefaultValue="@null" Placeholder="餐後血糖測量值">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 		<FormItem Label="三酸甘油脂">
-			<Input @bind-Value="@bloodTest.TG" DefaultValue="@null" Placeholder="TG"/>
+			<Input @bind-Value="@bloodTest.TG" DefaultValue="@null" Placeholder="TG">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 		<FormItem Label="肌酸酐">
-			<Input @bind-Value="@bloodTest.Creatinine" DefaultValue="@null" Placeholder="Creatinine"/>
+			<Input @bind-Value="@bloodTest.Creatinine" DefaultValue="@null" Placeholder="Creatinine">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 	</Body>
 </Card>

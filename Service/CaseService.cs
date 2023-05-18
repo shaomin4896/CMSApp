@@ -40,5 +40,30 @@ namespace CaseManagementApp.Service
             var cmsCase = await _httpClient.GetFromJsonAsync<CmsCase>($"/Case/{id}");
             return cmsCase;
         }
+
+        public async Task AddBloodPressure(int caseId, BloodPressureTest bloodPressureTest)
+        {
+            await _httpClient.PostAsJsonAsync<BloodPressureTest>($"/Case/bloodPressure/{caseId}", bloodPressureTest);
+        }
+
+        public async Task AddBloodTest(int caseId, BloodTest bloodTest)
+        {
+            await _httpClient.PostAsJsonAsync<BloodTest>($"/Case/bloodtest/{caseId}", bloodTest);
+        }
+
+        public async Task AddUrineTest(int caseId, UrineTest urineTest)
+        {
+            await _httpClient.PostAsJsonAsync<UrineTest>($"/Case/urinetest/{caseId}", urineTest);
+        }
+
+        public async Task AddFootTest(int caseId, FootTest footTest)
+        {
+            await _httpClient.PostAsJsonAsync<FootTest>($"/Case/foottest/{caseId}", footTest);
+        }
+
+        public async Task AddEyeTest(int caseId, EyeTest eyeTest)
+        {
+            await _httpClient.PostAsJsonAsync<EyeTest>($"/Case/eyetest/{caseId}", eyeTest);
+        }
     }
 }

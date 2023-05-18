@@ -5,7 +5,7 @@
 	<Extra></Extra>
 	<Body>
 		<FormItem Label="檢驗日期">
-			<DatePicker @bind-Value="@urineTest.TestDate" DefaultValue="@DateTime.Now" TValue="DateTime?" Picker="@DatePickerType.Date" />
+			<DatePicker @bind-Value="@urineTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
 		</FormItem>
 		<FormItem Label="尿液常規檢查">
 			<RadioGroup @bind-Value="@urineTest.DidRoutine">
@@ -14,10 +14,14 @@
 			</RadioGroup>
 		</FormItem>
 		<FormItem Label="低密度脂蛋白">
-			<Input @bind-Value="@urineTest.LDL" DefaultValue="@null" Placeholder=""/>
+			<Input @bind-Value="@urineTest.LDL" DefaultValue="@null" Placeholder="">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 		<FormItem Label="尿液微量蛋白">
-			<Input @bind-Value="@urineTest.Microprotein" DefaultValue="@null" Placeholder=""/>
+			<Input @bind-Value="@urineTest.Microprotein" DefaultValue="@null" Placeholder="">
+				<AddOnAfter>mg/dl</AddOnAfter>
+			</Input>
 		</FormItem>
 	</Body>
 </Card>

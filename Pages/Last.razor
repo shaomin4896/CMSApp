@@ -10,54 +10,87 @@
 @inject NavigationManager _NavManager;
 
 <Spin Spinning=isLoading>
-	<Card Title="年度評估">
+	<Form Size="large" Layout="@FormLayout.Horizontal" LabelCol="@(new ColLayoutParam { Span = "4" })"
+	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@cmsCase">
+		<Card Title="年度評估">
+			<Body>
+				<Row>
+					<Col Span="12">
+						<Input Value="@cmsCase.Id" Size="@InputSize.Large">
+							<AddOnBefore>個案編號：</AddOnBefore>
+						</Input><br><br>
+						<Input Value="@cmsCase.PatientName" Size="@InputSize.Large">
+							<AddOnBefore>姓名：</AddOnBefore>
+						</Input><br><br>
+						<Input Value="@cmsCase.CustomerId" Size="@InputSize.Large">
+							<AddOnBefore>身分證字號：</AddOnBefore>
+						</Input><br><br>
+						<Input Value="@cmsCase.DoctorName" Size="@InputSize.Large">
+							<AddOnBefore>醫生姓名：</AddOnBefore>
+						</Input><br><br>
+						<Input Value="@cmsCase?.Manger?.Name" Size="@InputSize.Large">
+							<AddOnBefore>個管師：</AddOnBefore>
+						</Input><br><br>
+						<Input Value="@cmsCase?.BloodTests?.Count" Size="@InputSize.Large">
+							<AddOnBefore>複診次數：</AddOnBefore>
+						</Input><br><br>
+						<DatePicker @bind-Value=bloodPressureTest.TestDate
+									TValue="DateTime?" Picker="@DatePickerType.Date" Size="@DatePickerSize.Large"/><br><br>
+						<Input Type="number" @bind-Value=bloodPressureTest.Systolic Size="@InputSize.Large">
+							<AddOnBefore>血壓－收縮壓：</AddOnBefore>
+							<AddOnAfter>mmHg</AddOnAfter>
+						</Input><br><br>
+						<Input Type="number" @bind-Value=bloodPressureTest.Diastolic Size="@InputSize.Large">
+							<AddOnBefore>血壓－舒張壓：</AddOnBefore>
+							<AddOnAfter>mmHg</AddOnAfter>
+						</Input><br><br>
+						
+						<Divider></Divider>
+						<Foot footTest="footTest"></Foot>
+					</Col>
+					<Col Span="1"></Col>
+					<Col Span="11">
+						<Blood bloodTest="bloodTest"></Blood>
+						<Divider></Divider>
+						<Urine urineTest="urineTest"></Urine>
+						<Divider></Divider>
+						<Eye eyeTest="eyeTest"></Eye>
+					</Col>
+				</Row>
+				<Divider></Divider>
+				<Row>
+					<Col Span="11"></Col>
+					<Col Span="2"><Button Size="@ButtonSize.Large" OnClick="SaveAsync">儲存</Button></Col>
+					<Col Span="11"></Col>
+				</Row>
+			</Body>
+		</Card>
+	</Form>
 
-		<Body>
-			<Row>
-				<Col Span="12">
-					<Input Value="@cmsCase.Id" Size="@InputSize.Large">
-						<AddOnBefore>個案編號：</AddOnBefore>
-					</Input><br><br>
-					<Input Value="@cmsCase.PatientName" Size="@InputSize.Large">
-						<AddOnBefore>姓名：</AddOnBefore>
-					</Input><br><br>
-					<Input Value="@cmsCase.CustomerId" Size="@InputSize.Large">
-						<AddOnBefore>身分證字號：</AddOnBefore>
-					</Input><br><br>
-					<Input Value="@cmsCase.DoctorName" Size="@InputSize.Large">
-						<AddOnBefore>醫生姓名：</AddOnBefore>
-					</Input><br><br>
-					<Input Value="@cmsCase.Manger.Name" Size="@InputSize.Large">
-						<AddOnBefore>個管師：</AddOnBefore>
-					</Input><br><br>
-					<Input Value="@cmsCase.BloodTests.Count" Size="@InputSize.Large">
-						<AddOnBefore>複診次數：</AddOnBefore>
-					</Input><br><br>
-				</Col>
-				<Col Span="12">
-				</Col>
-			</Row>
-		</Body>
-	</Card>
 </Spin>
 @code
 {
 	[Parameter]
 	public int caseId { get; set; }
 	private CmsCase? cmsCase = new();
+	private BloodPressureTest bloodPressureTest = new();
 	private BloodTest bloodTest = new();
-	private HealthHistory healthHistory = new()
-		{
-			Manager = new() { }
-		};
+	private UrineTest urineTest = new();
+	private FootTest footTest = new();
+	private EyeTest eyeTest = new();
 	private bool isLoading = false;
 	protected async override Task OnInitializedAsync()
 	{
 		cmsCase = await _caseService.GetCaseAsync(caseId);
-		Console.WriteLine(cmsCase.ToJsonString());
+		
 	}
-
-	private async void OnFinish()
+	
+	private async Task SaveAsync()
 	{
+		Console.WriteLine(bloodPressureTest.ToJsonString());
+		Console.WriteLine(bloodTest.ToJsonString());
+		Console.WriteLine(urineTest.ToJsonString());
+		Console.WriteLine(footTest.ToJsonString());
+		Console.WriteLine(eyeTest.ToJsonString());
 	}
 }

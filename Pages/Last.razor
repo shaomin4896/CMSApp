@@ -11,57 +11,61 @@
 
 <Spin Spinning=isLoading>
 	<Form Size="large" Layout="@FormLayout.Horizontal" LabelCol="@(new ColLayoutParam { Span = "4" })"
-	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@cmsCase">
+		WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@cmsCase">
 		<Card Title="年度評估">
+
 			<Body>
 				<Row>
 					<Col Span="12">
-						<Input Value="@cmsCase.Id" Size="@InputSize.Large">
-							<AddOnBefore>個案編號：</AddOnBefore>
-						</Input><br><br>
-						<Input Value="@cmsCase.PatientName" Size="@InputSize.Large">
-							<AddOnBefore>姓名：</AddOnBefore>
-						</Input><br><br>
-						<Input Value="@cmsCase.CustomerId" Size="@InputSize.Large">
-							<AddOnBefore>身分證字號：</AddOnBefore>
-						</Input><br><br>
-						<Input Value="@cmsCase.DoctorName" Size="@InputSize.Large">
-							<AddOnBefore>醫生姓名：</AddOnBefore>
-						</Input><br><br>
-						<Input Value="@cmsCase?.Manger?.Name" Size="@InputSize.Large">
-							<AddOnBefore>個管師：</AddOnBefore>
-						</Input><br><br>
-						<Input Value="@cmsCase?.BloodTests?.Count" Size="@InputSize.Large">
-							<AddOnBefore>複診次數：</AddOnBefore>
-						</Input><br><br>
-						<DatePicker @bind-Value=bloodPressureTest.TestDate
-									TValue="DateTime?" Picker="@DatePickerType.Date" Size="@DatePickerSize.Large"/><br><br>
-						<Input Type="number" @bind-Value=bloodPressureTest.Systolic Size="@InputSize.Large">
-							<AddOnBefore>血壓－收縮壓：</AddOnBefore>
-							<AddOnAfter>mmHg</AddOnAfter>
-						</Input><br><br>
-						<Input Type="number" @bind-Value=bloodPressureTest.Diastolic Size="@InputSize.Large">
-							<AddOnBefore>血壓－舒張壓：</AddOnBefore>
-							<AddOnAfter>mmHg</AddOnAfter>
-						</Input><br><br>
-						
-						<Divider></Divider>
-						<Foot footTest="footTest"></Foot>
+					<Input Value="@cmsCase.Id" Size="@InputSize.Large">
+					<AddOnBefore>個案編號：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.PatientName" Size="@InputSize.Large">
+					<AddOnBefore>姓名：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.CustomerId" Size="@InputSize.Large">
+					<AddOnBefore>身分證字號：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase.DoctorName" Size="@InputSize.Large">
+					<AddOnBefore>醫生姓名：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase?.Manger?.Name" Size="@InputSize.Large">
+					<AddOnBefore>個管師：</AddOnBefore>
+					</Input><br><br>
+					<Input Value="@cmsCase?.BloodTests?.Count" Size="@InputSize.Large">
+					<AddOnBefore>複診次數：</AddOnBefore>
+					</Input><br><br>
+					<DatePicker @bind-Value=bloodPressureTest.TestDate TValue="DateTime?" Picker="@DatePickerType.Date"
+						Size="@DatePickerSize.Large" /><br><br>
+					<Input Type="number" @bind-Value=bloodPressureTest.Systolic Size="@InputSize.Large">
+					<AddOnBefore>血壓－收縮壓：</AddOnBefore>
+					<AddOnAfter>mmHg</AddOnAfter>
+					</Input><br><br>
+					<Input Type="number" @bind-Value=bloodPressureTest.Diastolic Size="@InputSize.Large">
+					<AddOnBefore>血壓－舒張壓：</AddOnBefore>
+					<AddOnAfter>mmHg</AddOnAfter>
+					</Input><br><br>
+
+					<Divider></Divider>
+					<Foot footTest="footTest"></Foot>
 					</Col>
-					<Col Span="1"></Col>
+					<Col Span="1">
+					</Col>
 					<Col Span="11">
-						<Blood bloodTest="bloodTest"></Blood>
-						<Divider></Divider>
-						<Urine urineTest="urineTest"></Urine>
-						<Divider></Divider>
-						<Eye eyeTest="eyeTest"></Eye>
+					<Blood bloodTest="bloodTest"></Blood>
+					<Divider></Divider>
+					<Urine urineTest="urineTest"></Urine>
+					<Divider></Divider>
+					<Eye eyeTest="eyeTest"></Eye>
 					</Col>
 				</Row>
 				<Divider></Divider>
 				<Row>
-					<Col Span="11"></Col>
+					<Col Span="11">
+					</Col>
 					<Col Span="2"><Button Size="@ButtonSize.Large" OnClick="SaveAsync">儲存</Button></Col>
-					<Col Span="11"></Col>
+					<Col Span="11">
+					</Col>
 				</Row>
 			</Body>
 		</Card>
@@ -82,15 +86,27 @@
 	protected async override Task OnInitializedAsync()
 	{
 		cmsCase = await _caseService.GetCaseAsync(caseId);
-		
+
 	}
-	
+
 	private async Task SaveAsync()
 	{
-		Console.WriteLine(bloodPressureTest.ToJsonString());
-		Console.WriteLine(bloodTest.ToJsonString());
-		Console.WriteLine(urineTest.ToJsonString());
-		Console.WriteLine(footTest.ToJsonString());
-		Console.WriteLine(eyeTest.ToJsonString());
+		try
+		{
+			await _caseService.AddBloodPressure(caseId, bloodPressureTest);
+			await _caseService.AddBloodTest(caseId, bloodTest);
+			await _caseService.AddEyeTest(caseId, eyeTest);
+			await _caseService.AddFootTest(caseId, footTest);
+			await _caseService.AddUrineTest(caseId, urineTest);
+			await _notice.Open(new NotificationConfig()
+				{
+					Message = "年度評估新增成功！",
+					Description = $"病患 {cmsCase.PatientName}，新增成功",
+					NotificationType = NotificationType.Success
+				});
+		}
+		catch (System.Exception)
+		{
+		}
 	}
 }

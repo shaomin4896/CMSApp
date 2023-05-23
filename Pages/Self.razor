@@ -1,0 +1,150 @@
+@page "/self/{caseId:int}"
+@using System.Text.Json;
+@using CaseManagementAPI.Models;
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService _localStorageService;
+@inject Service.AuthService _authService;
+@inject Service.CaseService _caseService;
+@inject INotificationService _notice
+@inject LoginState _loginState;
+@inject NavigationManager _NavManager;
+
+
+<Form Size="large" Layout="@FormLayout.Horizontal" LabelCol="@(new ColLayoutParam { Span = "4" })"
+	WrapperCol="@(new ColLayoutParam { Span = "14" })" Model="@patientSelfHistory">
+	<Spin Spinning=isLoading>
+		<Tabs DefaultActiveKey="1" Type="@TabType.Card" Size="@TabSize.Large">
+			<TabPane Key="1" Tab="自主檢驗項目">
+				<GridRow>
+					<GridCol Span="12">
+						日期：<DatePicker @bind-Value=@date TValue="DateTime?"></DatePicker>
+					</GridCol>
+					<GridCol Span="12">
+						時間：
+						<TimePicker @bind-Value=@time TValue="DateTime?" />
+					</GridCol>
+				</GridRow>
+				<br>
+				<GridRow>
+					<GridCol Span="7">
+						<Input Type="number" @bind-Value=patientSelfHistory.Height Size="@InputSize.Large">
+						<AddOnBefore>身高</AddOnBefore>
+						<AddOnAfter>CM</AddOnAfter>
+						</Input>
+					</GridCol>
+					<GridCol Span="5"></GridCol>
+					<GridCol Span="7">
+						<Input Type="number" @bind-Value=patientSelfHistory.Weight Size="@InputSize.Large">
+						<AddOnBefore>體重</AddOnBefore>
+						<AddOnAfter>KG</AddOnAfter>
+						</Input>
+					</GridCol>
+					<GridCol Span="5"></GridCol>
+				</GridRow>
+				<br>
+				<GridRow>
+					<GridCol Span="12">
+						血糖：
+					</GridCol>
+					<GridCol Span="12">
+						足部：
+					</GridCol>
+				</GridRow>
+				<br>
+				<GridRow>
+					<GridCol Span="7">
+						<Input Type="number" @bind-Value=patientSelfHistory.BloodTest.BloodSugarBeforeMeal Size="@InputSize.Large">
+						<AddOnBefore>餐前</AddOnBefore>
+						<AddOnAfter>mm/Hg</AddOnAfter>
+						</Input>
+					</GridCol>
+					<GridCol Span="5"></GridCol>
+					<GridCol Span="12">
+						左腳：
+						<RadioGroup @bind-Value="@patientSelfHistory.FootTest.IsLeftNormal">
+							<Radio RadioButton Value="@(true)">正常</Radio>
+							<Radio RadioButton Value="@(false)">異常</Radio>
+						</RadioGroup>
+					</GridCol>
+				</GridRow>
+				<br>
+				<GridRow>
+					<GridCol Span="7">
+						<Input Type="number" @bind-Value=patientSelfHistory.BloodTest.BloodSugarAfterMeal Size="@InputSize.Large">
+						<AddOnBefore>餐後</AddOnBefore>
+						<AddOnAfter>mm/Hg</AddOnAfter>
+						</Input>
+					</GridCol>
+					<GridCol Span="5"></GridCol>
+					<GridCol Span="12">
+						右腳：
+						<RadioGroup @bind-Value="@patientSelfHistory.FootTest.IsRightNormal">
+							<Radio RadioButton Value="@(true)">正常</Radio>
+							<Radio RadioButton Value="@(false)">異常</Radio>
+						</RadioGroup>
+					</GridCol>
+				</GridRow>
+				<br>
+				<GridRow>
+					<GridCol Span="7">
+						血壓：<br><br>
+						<Input Type="number" @bind-Value=patientSelfHistory.BloodPressureTest.Systolic Size="@InputSize.Large">
+						<AddOnBefore>收縮壓：</AddOnBefore>
+						<AddOnAfter>mm/Hg</AddOnAfter>
+						</Input><br><br>
+						<Input Type="number" @bind-Value=patientSelfHistory.BloodPressureTest.Diastolic Size="@InputSize.Large">
+						<AddOnBefore>舒張壓：</AddOnBefore>
+						<AddOnAfter>mm/Hg</AddOnAfter>
+						</Input>
+					</GridCol>
+					<GridCol Span="5"></GridCol>
+					<GridCol Span="12">
+
+					</GridCol>
+				</GridRow>
+			</TabPane>
+			<TabPane Key="2" Tab="自主衛教項目">
+				<Divider></Divider>
+				<Row>
+					<Col Span="11">
+					</Col>
+					<Col Span="2"><Button Size="@ButtonSize.Large" OnClick="OnFinish">儲存</Button></Col>
+					<Col Span="11">
+					</Col>
+				</Row>
+			</TabPane>
+		</Tabs>
+	</Spin>
+</Form>
+@code
+{
+	[Parameter]
+	public int caseId { get; set; }
+	private PatientSelfHistory patientSelfHistory { get; set; } = new()
+		{
+			BloodPressureTest = new(),
+			BloodTest = new(),
+			FootTest = new(),
+		};
+	private DateTime? date;
+	private DateTime? time;
+	private bool isLoading = false;
+	protected async override Task OnInitializedAsync()
+	{
+
+	}
+
+	private async void OnFinish()
+	{
+		Console.WriteLine(date);
+		Console.WriteLine(time);
+		Console.WriteLine(patientSelfHistory.ToJsonString());
+		@* await _notice.Open(new NotificationConfig()
+{
+Message = "追蹤紀錄新增成功",
+Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 已新增追蹤紀錄",
+NotificationType = NotificationType.Success
+});
+_NavManager.NavigateTo("/AddCase"); *@
+	}
+}

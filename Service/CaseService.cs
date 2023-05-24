@@ -65,5 +65,10 @@ namespace CaseManagementApp.Service
         {
             await _httpClient.PostAsJsonAsync<EyeTest>($"/Case/eyetest/{caseId}", eyeTest);
         }
+
+        public async Task AddPatientSelfHistory(int caseId , PatientSelfHistory patientSelfHistory)
+        {
+            await _httpClient.PostAsJsonAsync<PatientSelfHistory>($"/Case/patientSelf/{caseId}", patientSelfHistory);
+        }
     }
 }

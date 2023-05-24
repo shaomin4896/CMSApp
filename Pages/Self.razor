@@ -1,6 +1,7 @@
 @page "/self/{caseId:int}"
 @using System.Text.Json;
 @using CaseManagementAPI.Models;
+@using CaseManagementApp.Extensions;
 @inject IJSRuntime JsRuntime
 @inject ILocalStorageService _localStorageService;
 @inject Service.AuthService _authService;
@@ -99,11 +100,99 @@
 					</GridCol>
 					<GridCol Span="5"></GridCol>
 					<GridCol Span="12">
-
+						<Card Style="width:500px;">
+							<TitleTemplate>
+								<Icon Type="info-circle" Theme="outline"/>　
+								<span class="text-danger">貼心提醒</span>
+							</TitleTemplate>
+							<Extra>
+							</Extra>
+							<Body>
+								<p>每日檢查足部、腳趾（可利用鏡子，或請他人協助）<br>
+								<ol>
+									<li>每天檢視足部，若有外傷、無裂、水泡、香港腳（徽菌感染，雞眼或皮膚發紫發色…等，應立刻到醬院診洽。</li>
+									<li>特別注意足底幾個易受壓的地方是否有長繭</li>
+								</ol>
+								</p>
+							</Body>
+						</Card>
 					</GridCol>
 				</GridRow>
 			</TabPane>
 			<TabPane Key="2" Tab="自主衛教項目">
+				<Row>
+					<Col Span="10">
+						<div>
+							服藥紀錄：
+							<RadioGroup @bind-Value="@patientSelfHistory.MedicineRecord">
+								<Radio RadioButton Value="@("早")">早</Radio>
+								<Radio RadioButton Value="@("午")">午</Radio>
+								<Radio RadioButton Value="@("晚")">晚</Radio>
+								<Radio RadioButton Value="@("睡前")">睡前</Radio>
+							</RadioGroup>
+						</div>
+						<br>
+						<div>
+							<Input Type="number" @bind-Value=patientSelfHistory.FootCare Size="@InputSize.Large">
+							<AddOnBefore>足部照護：</AddOnBefore>
+							<AddOnAfter>次/天</AddOnAfter>
+							</Input>
+						</div>
+						<br>
+						<Card Style="width:500px;">
+							<TitleTemplate>
+								<Icon Type="info-circle" Theme="outline"/>　
+								<span class="text-danger">貼心提醒</span>
+							</TitleTemplate>
+							<Extra>
+							</Extra>
+							<Body>
+								<p>保持足部清潔：
+								<ol>
+									<li>每日以溫水(以手測水溫，不燙手)及中性肥皂洗腳。</li>
+									<li>若要泡腳，水溫 ＞36°C、時間＞10分鐘，水溫太高或浸泡時間大久，會使皮膚正常油脂流失就容易導致皮膚乾燥（皮膚乾燥者儘量避免泡腳）。</li>
+									<li>洗完腳後以毛巾輕輕拭乾，尤其趾縫間更應保持乾燥。</li>
+								</ol>
+								</p>
+							</Body>
+						</Card>
+					</Col>
+					<Col Span="2"></Col>
+					<Col Span="10">
+						<div>
+							<Input Type="number" @bind-Value=patientSelfHistory.SportCare Size="@InputSize.Large">
+							<AddOnBefore>運動紀錄：</AddOnBefore>
+							<AddOnAfter>分鐘/天</AddOnAfter>
+							</Input>
+						</div>
+						<br>
+						<div>
+							<Input Type="number" @bind-Value=patientSelfHistory.MouseCare Size="@InputSize.Large">
+							<AddOnBefore>口腔保養：</AddOnBefore>
+							<AddOnAfter>次/天</AddOnAfter>
+							</Input>
+						</div>
+						<br>
+						<Card Style="width:500px;">
+							<TitleTemplate>
+								<Icon Type="info-circle" Theme="outline"/>　
+								<span class="text-danger">貼心提醒</span>
+							</TitleTemplate>
+							<Extra>
+							</Extra>
+							<Body>
+								<p>口腔保姜：
+								<ol>
+									<li>維持良好口腔衛生 ：能減少牙周疾病的發生。</li>
+									<li>糖尿病常見口腔問題：口乾、口腔傷口不易癒合 容易蛀牙、味覺改變及牙周病等。</li>
+									<li>正確的潔牙為減少細菌最有效的方法。</li>
+									<li>每半年定期口腔檢查 就醫時告知牙醫師有糖尿病病史。</li>
+								</ol>
+								</p>
+							</Body>
+						</Card>
+					</Col>
+				</Row>
 				<Divider></Divider>
 				<Row>
 					<Col Span="11">
@@ -131,20 +220,37 @@
 	private bool isLoading = false;
 	protected async override Task OnInitializedAsync()
 	{
-
+		
 	}
 
 	private async void OnFinish()
 	{
-		Console.WriteLine(date);
-		Console.WriteLine(time);
-		Console.WriteLine(patientSelfHistory.ToJsonString());
-		@* await _notice.Open(new NotificationConfig()
-{
-Message = "追蹤紀錄新增成功",
-Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 已新增追蹤紀錄",
-NotificationType = NotificationType.Success
-});
-_NavManager.NavigateTo("/AddCase"); *@
+		try
+		{
+			DateTime? dateTime = date + time?.TimeOfDay;
+			patientSelfHistory.BloodPressureTest.TestDate = dateTime;
+			patientSelfHistory.BloodTest.TestDate = dateTime;
+			patientSelfHistory.FootTest.TestDate = dateTime;
+
+			await _caseService.AddPatientSelfHistory(caseId, patientSelfHistory);	
+			await _notice.Open(new NotificationConfig()
+			{
+			Message = "自主項目新增成功",
+			Description = $"新增項目＠ {dateTime?.ToLongDateString()} {dateTime?.ToLongTimeString()}",
+			NotificationType = NotificationType.Success
+			});
+		}
+		catch (System.Exception e)
+		{
+			await _notice.Open(new NotificationConfig()
+			{
+			Message = "自主項目新增失敗",
+			Description = $"新增項目失敗、請檢查網路或確認格式",
+			NotificationType = NotificationType.Error
+			});
+			throw;
+		}
+		
+		@*  *@
 	}
 }

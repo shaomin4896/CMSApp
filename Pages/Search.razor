@@ -1,0 +1,156 @@
+@page "/search"
+@using System.Text.Json;
+@using CaseManagementAPI.Models;
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService _localStorageService;
+@inject Service.AuthService _authService;
+@inject Service.CaseService _caseService;
+@inject INotificationService _notice
+@inject LoginState _loginState;
+@inject NavigationManager _NavManager;
+@using System.ComponentModel
+@using AntDesign.TableModels
+
+
+<h1 style="text-align: center;">查詢</h1>
+<Row>
+	<Col Span="3">
+	</Col>
+	<Col Span="8">
+	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.CaseId Type="number" Placeholder="請輸入個案編號">
+	<AddOnBefore>個案編號</AddOnBefore>
+	</Input><br><br>
+	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.CustomerId Placeholder="請輸入身分證字號">
+	<AddOnBefore>身分證字號</AddOnBefore>
+	</Input>
+	</Col>
+	<Col Span="2">
+	</Col>
+	<Col Span="8">
+	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.PatientName Placeholder="請輸入姓名">
+	<AddOnBefore>姓名</AddOnBefore>
+	</Input><br><br>
+	檢驗日期：<DatePicker Size="@DatePickerSize.Large" @bind-Value=@queryPayload.TestDate></DatePicker>
+	</Col>
+	<Col Span="3">
+	</Col>
+</Row>
+<Divider></Divider>
+<Row>
+	<Col Span="8"></Col>
+	<Col Span="8">
+		<Button Size="@ButtonSize.Large" OnClick="()=> { queryPayload = new(); }" >清除資料</Button>　
+		<Button Type="@ButtonType.Primary" Size="@ButtonSize.Large" OnClick="OnSearchClick">搜尋</Button>
+	</Col>
+	<Col Span="8"></Col>
+</Row>
+<Divider></Divider>
+<Table @ref="table" TItem="WeatherForecast" DataSource="@forecasts" Total="_total" @bind-PageIndex="_pageIndex"
+@bind-PageSize="_pageSize" @bind-SelectedRows="selectedRows" OnChange="OnChange">
+	<Selection Key="@(context.Id.ToString())" />
+	<PropertyColumn Property="c=>c.Id" Sortable />
+		<PropertyColumn Property="c=>c.Date" Format="yyyy-MM-dd" Sortable />
+		<PropertyColumn Property="c=>c.TemperatureC" Sortable />
+		<PropertyColumn Title="Temp. (F)" Property="c=>c.TemperatureF" />
+		<PropertyColumn Title="Hot" Property="c=>c.Hot">
+			<Switch @bind-Value="@context.Hot"></Switch>
+		</PropertyColumn>
+		<PropertyColumn Property="c=>c.Summary" Sortable />
+		<ActionColumn Title="Action">
+			<Space>
+				<SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+			</Space>
+		</ActionColumn>
+	</Table>
+
+	<br />
+	<p>PageIndex: @_pageIndex | PageSize: @_pageSize | Total: @_total</p>
+	@code {
+
+
+	WeatherForecast[] forecasts;
+
+	IEnumerable<WeatherForecast> selectedRows;
+	QueryPayload queryPayload = new();
+	ITable table;
+
+	int _pageIndex = 1;
+	int _pageSize = 10;
+	int _total = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		forecasts = await GetForecastAsync(1, 50);
+		_total = 50;
+	}
+
+	public class QueryPayload
+	{
+		public int? CaseId { get; set; }
+		public string? PatientName { get; set; }
+		public string? CustomerId { get; set; }
+		public DateTime? TestDate { get; set; }
+	}
+
+	public class WeatherForecast
+	{
+		public int Id { get; set; }
+
+		[DisplayName("Date")]
+		public DateTime? Date { get; set; }
+
+		[DisplayName("Temp. (C)")]
+		public int TemperatureC { get; set; }
+
+		[DisplayName("Summary")]
+		public string Summary { get; set; }
+
+		public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+
+		public bool Hot { get; set; }
+	}
+
+	private static readonly string[] Summaries = new[]
+	{
+"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+	public async Task OnChange(QueryModel<WeatherForecast> queryModel)
+	{
+		Console.WriteLine(JsonSerializer.Serialize(queryModel));
+	}
+
+	public async Task OnSearchClick()
+	{
+		Console.WriteLine(queryPayload.ToJsonString());
+	}
+
+	public Task<WeatherForecast[]> GetForecastAsync(int pageIndex, int pageSize)
+	{
+		var rng = new Random();
+		return Task.FromResult(Enumerable.Range((pageIndex - 1) * pageSize + 1, pageSize).Select(index =>
+		{
+			var temperatureC = rng.Next(-20, 55);
+			return new WeatherForecast
+				{
+					Id = index,
+					Date = DateTime.Now.AddDays(index),
+					TemperatureC = temperatureC,
+					Summary = Summaries[rng.Next(Summaries.Length)],
+					Hot = temperatureC > 30,
+				};
+		}).ToArray());
+	}
+
+	public void RemoveSelection(int id)
+	{
+		var selected = selectedRows.Where(x => x.Id != id);
+		selectedRows = selected;
+	}
+
+	private void Delete(int id)
+	{
+		forecasts = forecasts.Where(x => x.Id != id).ToArray();
+		_total = forecasts.Length;
+	}
+}

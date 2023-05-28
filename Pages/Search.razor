@@ -12,6 +12,7 @@
 @using AntDesign.TableModels;
 @using Models.ControlItems;
 @using Extensions;
+@inject ModalService _modalService
 
 
 <h1 style="text-align: center;">查詢</h1>
@@ -46,8 +47,9 @@
 	</Col>
 	<Col Span="8"></Col>
 </Row>
+
 <Divider></Divider>
-<Table @ref="table" ScrollX="2000" TItem="TestRecord" DataSource="@testRecords" Total="_total" @bind-PageIndex="_pageIndex"
+<Table @ref="table" ScrollX="2500" TItem="TestRecord" DataSource="@testRecords" Total="_total" @bind-PageIndex="_pageIndex"
 @bind-PageSize="_pageSize" OnChange="OnChange">
 	<PropertyColumn Title="醫師姓名" Property="t => t.DoctorName"></PropertyColumn>
 	<PropertyColumn Title="追蹤日期" Property="t => t.TestDate" Format="yyyy-MM-dd"></PropertyColumn>
@@ -66,7 +68,12 @@
 	<PropertyColumn Title="眼睛" Property="t => t.IsNormal"></PropertyColumn>
 	<ActionColumn Title="功能選項">
 		<Space>
-			<SpaceItem><Button Danger OnClick="()=>{}">Delete</Button></SpaceItem>
+			<SpaceItem><Button OnClick="() => { Trace(context.CmsCase.Id); }">個案追蹤</Button></SpaceItem>
+			<SpaceItem><Button OnClick="()=>{ Last(context.CmsCase.Id); }">年度評估</Button></SpaceItem>
+			@if(context.HealthHistory != null)
+			{
+				<SpaceItem><Button OnClick="() => { HealthHistory(context); }">衛教紀錄</Button></SpaceItem>	
+			}
 		</Space>
 	</ActionColumn>
 </Table>
@@ -78,6 +85,8 @@
 	QueryPayload queryPayload = new();
 	List<TestRecord> testRecords = new();
 	ITable table;
+	bool healthModalVisible = false;
+	TestRecord activedTestRecord;
 
 	int _pageIndex = 1;
 	int _pageSize = 10;
@@ -85,8 +94,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		CmsCase cmsCase = await _caseService.GetCaseAsync(13);
-		testRecords = cmsCase.ToTestRecords();
+		
 	}
 
 	public async Task OnChange(QueryModel<TestRecord> queryModel)
@@ -96,6 +104,39 @@
 
 	public async Task OnSearchClick()
 	{
-		Console.WriteLine(queryPayload.ToJsonString());
+		testRecords.Clear();
+		var cases = await _caseService.GetCasesByQueryPayload(queryPayload);
+		cases.ForEach(x => testRecords.AddRange(x.ToTestRecords()));
+		if (queryPayload.TestDate != null) 
+			testRecords = testRecords.Where(x => x.TestDate.Date == queryPayload.TestDate).ToList();
+	}
+
+	public void Trace(int caseId)
+	{
+		_NavManager.NavigateTo($"/trace/{caseId}");
+	}
+
+	public void Last(int caseId)
+	{
+		_NavManager.NavigateTo($"/last/{caseId}");
+	}
+
+	public void HealthHistory(TestRecord actived)
+	{
+		string bitString = "";
+		actived.HealthHistory.TraceItem.ForEach(x => bitString += Convert.ToInt32(x).ToString());
+
+		RenderFragment content =
+			@<div>
+				<h6>選取紀錄</h6>
+                <p>@bitString</p>
+				<h6>紀錄內容</h6>
+                <p>@actived.HealthHistory.Content</p>
+            </div>;
+        _modalService.Info(new ConfirmOptions()
+        {
+            Title = "衛教紀錄",
+            Content = content
+        });
 	}
 }

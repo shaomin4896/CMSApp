@@ -53,7 +53,7 @@ namespace CaseManagementApp.Models.ControlItems
         /// 常規檢查
         /// </summary>
         /// <value></value>
-        public bool DidRoutine { get; set; }
+        public bool? DidRoutine { get; set; }
 
         /// <summary>
         /// 低密度脂蛋白

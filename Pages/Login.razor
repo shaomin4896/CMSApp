@@ -6,6 +6,7 @@
 @inject Service.AuthService _authService;
 @inject NotificationService _notice
 @inject LoginState _loginState
+@inject Service.CaseService _caseService;
 @inject NavigationManager NavManager
 
 
@@ -50,15 +51,31 @@
 		if (_loginState.IsLogin)
 		{
 			IsLoading = true;
-			StateHasChanged();
 			await _notice.Open(new NotificationConfig()
 				{
 					Message = "登入成功！",
 					Description = $"歡迎！{user.Name}",
 					NotificationType = NotificationType.Success
 				});
-			NavManager.NavigateTo("/addCase");
+
+			if (user.RoleType == RoleType.Manager)
+				NavManager.NavigateTo("/addCase");
+			else
+			{
+				var @case = await _caseService.GetCmsCaseByPatientIdAsync(user.Id);
+				NavManager.NavigateTo($"/self/{@case.Id}");
+			}
+				
 		}
+
+	}
+
+	protected async override void OnInitialized()
+	{
+		await InvokeAsync(() =>
+		{
+			StateHasChanged();
+		});
 	}
 
 	private async void OnFinishFailed(EditContext editContext)

@@ -11,29 +11,44 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="addcase" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> 個案登錄
-            </NavLink>
-        </div>
+
         @if (!_loginState.IsLogin)
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="login">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> 登入
+                    <Icon Type="home" Theme="outline"/> 　登入
                 </NavLink>
             </div>
         }
+        else if(_loginState.User.RoleType == RoleType.Manager)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="addcase" Match="NavLinkMatch.All">
+                    <Icon Type="edit" Theme="outline"/> 　個案登錄
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="search" Match="NavLinkMatch.All">
+                    <Icon Type="search" Theme="outline"/> 　搜尋
+                </NavLink>
+            </div>
+        }
+
     </nav>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
+    private System.Timers.Timer _timer;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    protected override void OnInitialized()
+    {
+
     }
 }

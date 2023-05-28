@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CaseManagementAPI.Models;
 using System.Net.Http.Json;
+using CaseManagementApp.Models.ControlItems;
 
 namespace CaseManagementApp.Service
 {
@@ -69,6 +70,17 @@ namespace CaseManagementApp.Service
         public async Task AddPatientSelfHistory(int caseId , PatientSelfHistory patientSelfHistory)
         {
             await _httpClient.PostAsJsonAsync<PatientSelfHistory>($"/Case/patientSelf/{caseId}", patientSelfHistory);
+        }
+        
+        public async Task<List<CmsCase>> GetCasesByQueryPayload(QueryPayload queryPayload)
+        {
+            var res = await _httpClient.PostAsJsonAsync<QueryPayload>("/Case/query",queryPayload);
+            return await res.Content.ReadFromJsonAsync<List<CmsCase>>();
+        } 
+
+        public async Task<CmsCase> GetCmsCaseByPatientIdAsync(int id)
+        {
+            return await _httpClient.GetFromJsonAsync<CmsCase>($"/Case/patientCase/{id}");
         }
     }
 }

@@ -8,7 +8,7 @@
 			<DatePicker @bind-Value="@urineTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
 		</FormItem>
 		<FormItem Label="尿液常規檢查">
-			<RadioGroup @bind-Value="@urineTest.DidRoutine">
+			<RadioGroup @bind-Value="@urineTest.DidRoutine" DefaultValue="@false">
 							<Radio RadioButton Value="@(true)">已做</Radio>
 							<Radio RadioButton Value="@(false)">未做</Radio>
 			</RadioGroup>

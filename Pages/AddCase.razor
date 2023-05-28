@@ -144,7 +144,7 @@
 			await _notice.Open(new NotificationConfig()
 			{
 				Message = "登錄成功",
-				Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 案件已登錄",
+				Description = $"病患姓名：{model.PatientName} , 身分證字號：{model.CustomerId}, 案件 #{newCaseId}已登錄",
 				NotificationType = NotificationType.Success
 			});
 		}

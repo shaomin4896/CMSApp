@@ -12,15 +12,15 @@ namespace CaseManagementAPI.Models
         public string PatientName { get; set; }
         public bool IsMale { get; set; }
         public string CustomerId { get; set; }
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
         public string DoctorName { get; set; }
         public DateTime SeekDate { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public string EndReason { get; set; }
-        public decimal Height { get; set; }
-        public decimal Weight { get; set; }
-        public decimal Waistline { get; set; }
+        public decimal? Height { get; set; }
+        public decimal? Weight { get; set; }
+        public decimal? Waistline { get; set; }
         public string AllergyMd { get; set; }
         public string MedicalHistory { get; set; }
         public string FamilyMedicalHistory { get; set; }

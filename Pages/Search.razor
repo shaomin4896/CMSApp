@@ -20,9 +20,9 @@
 	<Col Span="3">
 	</Col>
 	<Col Span="8">
-	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.CaseId Type="number" Placeholder="請輸入個案編號">
+	@* <Input Size="@InputSize.Large" @bind-Value=@queryPayload.CaseId Type="number" Placeholder="請輸入個案編號">
 	<AddOnBefore>個案編號</AddOnBefore>
-	</Input><br><br>
+	</Input><br><br> *@
 	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.CustomerId Placeholder="請輸入身分證字號">
 	<AddOnBefore>身分證字號</AddOnBefore>
 	</Input>
@@ -33,7 +33,7 @@
 	<Input Size="@InputSize.Large" @bind-Value=@queryPayload.PatientName Placeholder="請輸入姓名">
 	<AddOnBefore>姓名</AddOnBefore>
 	</Input><br><br>
-	檢驗日期：<DatePicker Size="@DatePickerSize.Large" @bind-Value=@queryPayload.TestDate></DatePicker>
+	@* 檢驗日期：<DatePicker Size="@DatePickerSize.Large" @bind-Value=@queryPayload.TestDate></DatePicker> *@
 	</Col>
 	<Col Span="3">
 	</Col>
@@ -61,11 +61,11 @@
 	<PropertyColumn Title="血糖測量值" Property="t => t.BloodSugarBeforeMeal"></PropertyColumn>
 	<PropertyColumn Title="三酸甘油脂" Property="t => t.TG"></PropertyColumn>
 	<PropertyColumn Title="肌酸酐" Property="t => t.Creatinine"></PropertyColumn>
-	<PropertyColumn Title="尿液常規檢查" Property="t => t.DidRoutine"></PropertyColumn>
+	<PropertyColumn Title="尿液常規檢查" Field="BoolToIsNormalString(context.DidRoutine)"></PropertyColumn>
 	<PropertyColumn Title="低密度脂蛋白" Property="t => t.LDL"></PropertyColumn>
-	<PropertyColumn Title="左腳足部" Property="t => t.IsLeftNormal"></PropertyColumn>
-	<PropertyColumn Title="右腳足部" Property="t => t.IsRightNormal"></PropertyColumn>
-	<PropertyColumn Title="眼睛" Property="t => t.IsNormal"></PropertyColumn>
+	<PropertyColumn Title="左腳足部" Field="BoolToIsNormalString(context.IsLeftNormal)"></PropertyColumn>
+	<PropertyColumn Title="右腳足部" Field="BoolToIsNormalString(context.IsRightNormal)"></PropertyColumn>
+	<PropertyColumn Title="眼睛" Field="BoolToIsNormalString(context.IsNormal)"></PropertyColumn>
 	<ActionColumn Title="功能選項">
 		<Space>
 			<SpaceItem><Button OnClick="() => { Trace(context.CmsCase.Id); }">個案追蹤</Button></SpaceItem>
@@ -100,6 +100,15 @@
 	public async Task OnChange(QueryModel<TestRecord> queryModel)
 	{
 		Console.WriteLine(JsonSerializer.Serialize(queryModel));
+	}
+
+	public string BoolToIsNormalString(bool? b) 
+	{
+		if (b == null) return "";
+		else if (b == true)
+			return "正常";
+		else
+			return "異常";
 	}
 
 	public async Task OnSearchClick()

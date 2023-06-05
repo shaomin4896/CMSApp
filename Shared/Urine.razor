@@ -5,7 +5,7 @@
 	<Extra></Extra>
 	<Body>
 		<FormItem Label="檢驗日期">
-			<DatePicker @bind-Value="@urineTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
+			<DatePicker @bind-Value="@urineTest.TestDate" Picker="@DatePickerType.Date" />
 		</FormItem>
 		<FormItem Label="尿液常規檢查">
 			<RadioGroup @bind-Value="@urineTest.DidRoutine" DefaultValue="@false">
@@ -30,4 +30,10 @@
 {
 	[Parameter]
 	public UrineTest urineTest { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		urineTest.TestDate = DateTime.Now;
+	}
+
 }

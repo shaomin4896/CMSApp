@@ -35,7 +35,7 @@
 						<Input @bind-Value="@context.CustomerId" />
 					</FormItem>
 					<FormItem Label="出生年月日">
-						<DatePicker @bind-Value="@context.Birthday" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+						<DatePicker @bind-Value="@context.Birthday" TValue="DateTime?" Picker="@DatePickerType.Date" />
 					</FormItem>
 					<FormItem Label="醫師姓名">
 						<Input @bind-Value="@context.DoctorName" />
@@ -44,10 +44,10 @@
 						<DatePicker @bind-Value="@context.SeekDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
 					</FormItem>
 					<FormItem Label="收案日期">
-						<DatePicker @bind-Value="@context.StartDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+						<DatePicker @bind-Value="@context.StartDate" Picker="@DatePickerType.Date" />
 					</FormItem>
 					<FormItem Label="結案日期">
-						<DatePicker @bind-Value="@context.EndDate" DefaultValue="@DateTime.Now" TValue="DateTime" Picker="@DatePickerType.Date" />
+						<DatePicker @bind-Value="@context.EndDate" Picker="@DatePickerType.Date" />
 					</FormItem>
 					<FormItem Label="結案原因">
 						<TextArea @bind-Value="@context.EndReason" Placeholder="請輸入原因" AutoSize="true"/>
@@ -60,10 +60,14 @@
 						</Input>
 					</FormItem>
 					<FormItem Label="體重">
-						<Input @bind-Value="@context.Weight" />
+						<Input @bind-Value="@context.Weight" >
+							<AddOnAfter>KG</AddOnAfter>
+						</Input>
 					</FormItem>
 					<FormItem Label="腰圍">
-						<Input @bind-Value="@context.Waistline" />
+						<Input @bind-Value="@context.Waistline" >
+							<AddOnAfter>CM</AddOnAfter>
+						</Input>
 					</FormItem>
 					<FormItem Label="過敏藥物">
 						<Input @bind-Value="@context.AllergyMd" />

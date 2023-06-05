@@ -5,7 +5,7 @@
 	<Extra></Extra>
 	<Body>
 		<FormItem Label="檢驗日期">
-			<DatePicker @bind-Value="@eyeTest.TestDate" TValue="DateTime?" Picker="@DatePickerType.Date" />
+			<DatePicker @bind-Value="@eyeTest.TestDate" DefaultValue="@DateTime.Now" TValue="DateTime?" Picker="@DatePickerType.Date" />
 		</FormItem>
 		<FormItem Label=" ">
 			<RadioGroup @bind-Value="@eyeTest.IsNormal">

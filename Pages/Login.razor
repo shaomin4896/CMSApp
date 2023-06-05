@@ -10,7 +10,15 @@
 @inject NavigationManager NavManager
 
 
-<div class="col-4">
+<div class="row">
+	<div class="col-4"></div>
+	<div class="col">
+		<h3>糖尿病個案管理系統</h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-3"></div>
+	<div class="col-4">
 	<Spin Spinning=IsLoading>
 		<Form OnFinish="OnFinish" OnFinishFailed="OnFinishFailed" Model="@model" LabelColSpan="8" WrapperColSpan="16">
 			<FormItem Label="帳號">
@@ -26,7 +34,10 @@
 			</FormItem>
 		</Form>
 	</Spin>
+	</div>		
+	<div class="col-4"></div>
 </div>
+
 
 
 @code

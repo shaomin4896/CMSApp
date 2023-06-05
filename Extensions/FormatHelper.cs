@@ -15,7 +15,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.BloodPressureTests.ForEach(x =>
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -36,7 +36,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.BloodTests.ForEach(x =>
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -61,7 +61,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.UrineTests.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -84,7 +84,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.FootTests.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -105,7 +105,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.EyeTests.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -124,7 +124,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.EyeTests.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -143,7 +143,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.HealthHistories.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.TraceDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.TraceDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
@@ -162,7 +162,7 @@ namespace CaseManagementApp.Extensions
 
             cmsCase.PatientSelfHistories.ForEach(x => 
             {
-                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate == x.BloodPressureTest.TestDate);
+                TestRecord? testRecord = testRecords.FirstOrDefault(t => t.TestDate.ToString() == x.BloodPressureTest.TestDate.ToString());
                 if (testRecord == null)
                 {
                     testRecord = new()
